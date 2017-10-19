@@ -20,11 +20,24 @@ use Ramsey\Uuid\Uuid;
 
 require __DIR__ . '/vendor/autoload.php';
 
+
+putenv("DB_PATH=/home/philippeback/ddddb");
+
 $userRepository = new InMemoryUserRepository();
 $meetupGroupRepository = new InMemoryMeetupGroupRepository();
 
 $eventDispatcher = new EventDispatcher();
 $eventDispatcher->subscribeToAllEvents(new EventCliLogger());
+
+$storageFacility = new \Common\EventSourcing\EventStore\Storage\DatabaseStorageFacility();
+$jsonSerializer = new \NaiveSerializer\JsonSerializer();
+
+$eventStore = new \Common\EventSourcing\EventStore\EventStore(
+    $storageFacility,
+    $eventDispatcher,
+    $jsonSerializer);
+
+$repository = new \Common\EventSourcing\Aggregate\Repository\EventSourcedAggregateRepository($eventStore,Meetup::class);
 
 $user = new User(
     $userRepository->nextIdentity(),
@@ -52,9 +65,14 @@ $meetup = Meetup::schedule(
     ))
 );
 dump($meetup);
+dump("Saving into repo");
+$repository->save($meetup);
 
+/*
 $eventDispatcher->registerSubscriber(MeetupScheduled::class, new WhenMeetupScheduledRsvpYesForOrganizer());
+
 
 foreach ($meetup->recordedEvents() as $event) {
     $eventDispatcher->dispatch($event);
 }
+*/

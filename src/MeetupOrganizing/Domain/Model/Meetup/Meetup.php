@@ -7,14 +7,12 @@ use Common\DomainModel\AggregateRoot;
 use MeetupOrganizing\Domain\Model\MeetupGroup\MeetupGroupId;
 use MeetupOrganizing\Domain\Model\User\UserId;
 
-final class Meetup
-{
-    use AggregateRoot;
+use Common\EventSourcing\Aggregate\EventSourcedAggregate;
+use Common\EventSourcing\Aggregate\EventSourcedAggregateCapabilities;
 
-    /**
-     * @var MeetupId
-     */
-    private $meetupId;
+final class Meetup implements EventSourcedAggregate
+{
+    use EventSourcedAggregateCapabilities;
 
     /**
      * @var MeetupGroupId
@@ -53,7 +51,7 @@ final class Meetup
         $this->organizerId = $organizerId;
         $this->title = $title;
         $this->scheduledFor = $scheduledFor;
-        $this->meetupId = $meetupId;
+        $this->id = $meetupId;
         $this->location = $location;
     }
 
@@ -70,5 +68,10 @@ final class Meetup
         $meetup->recordThat(new MeetupScheduled($meetupId, $meetupGroupId, $organizerId, $workingTitle, $scheduledFor));
 
         return $meetup;
+    }
+
+    private function whenMeetupScheduled(MeetupScheduled $event) {
+        dump("Coucou");
+        dump($event);
     }
 }
