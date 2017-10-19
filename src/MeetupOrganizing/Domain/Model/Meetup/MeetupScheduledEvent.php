@@ -34,4 +34,20 @@ final class MeetupScheduledEvent
         return new self($meetupId, $organizerId);
 
     }
+
+    /**
+     * @return \MeetupOrganizing\Domain\Model\Meetup\MeetupId
+     */
+    public function meetupId(): \MeetupOrganizing\Domain\Model\Meetup\MeetupId
+    {
+        return $this->meetupId;
+    }
+
+    /**
+     * @return UserId
+     */
+    public function organizerId(): UserId
+    {
+        return $this->organizerId;
+    }
 }

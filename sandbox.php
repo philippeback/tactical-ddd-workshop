@@ -72,9 +72,4 @@ foreach($events as $event) {
 $meetup->clearEvents();
 
 
-$rsvp = Rsvp::yes(
-    RsvpId::fromString((string)Uuid::uuid4()),
-    $meetupId,
-    $user->userId()
-);
-dump($rsvp);
+
