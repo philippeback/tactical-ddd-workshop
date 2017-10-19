@@ -40,8 +40,9 @@ $meetupGroupRepository->add($meetupGroup);
 // dispatch domain events
 //$eventDispatcher->dispatch(new \stdClass());
 
-$location = new Location(new Address('somewhere'), new Coordinates(45.0, 52.0));
+$location = Location::knownLocation(new Address('somewhere'), new Coordinates(45.0, 52.0));
 
+$location = Location::unknownLocation();
 
 $meetup = Meetup::schedule(
     MeetupId::fromString((string)Uuid::uuid4()),

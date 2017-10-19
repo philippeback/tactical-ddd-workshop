@@ -17,12 +17,20 @@ final class Location
      */
     private $coordinates;
 
-    public function __construct(Address $address, Coordinates $coordinates)
+    private function __construct(Address $address, Coordinates $coordinates)
     {
         Assertion::notEmpty($address);
 
         $this->address = $address;
         $this->coordinates = $coordinates;
+    }
+
+    public static function knownLocation(Address $address, Coordinates $coordinates): Location {
+        return new self( $address, $coordinates);
+    }
+
+    public static function unknownLocation(): Location {
+        return new self(Address::undefinedAddress(),Coordinates::undefinedCoordinates());
     }
 
 

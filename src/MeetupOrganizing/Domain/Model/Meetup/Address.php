@@ -7,6 +7,9 @@ use Assert\Assertion;
 
 final class Address
 {
+
+    //use SupportsUndefined;
+
     /**
      * @var string
      */
@@ -16,5 +19,9 @@ final class Address
     {
         Assertion::notEmpty($place);
         $this->place = $place;
+    }
+
+    public static function undefinedAddress(): Address {
+        return new self(static::$UNDEFINED);
     }
 }
