@@ -12,6 +12,8 @@ use MeetupOrganizing\Domain\Model\Meetup\ScheduledDate;
 use MeetupOrganizing\Domain\Model\Meetup\Title;
 use MeetupOrganizing\Domain\Model\MeetupGroup\MeetupGroup;
 use MeetupOrganizing\Domain\Model\User\User;
+use MeetupOrganizing\Domain\Model\Rsvp\RsvpId;
+use MeetupOrganizing\Domain\Model\Rsvp\
 use MeetupOrganizing\Infrastructure\Persistence\InMemoryMeetupGroupRepository;
 use MeetupOrganizing\Infrastructure\Persistence\InMemoryUserRepository;
 use Ramsey\Uuid\Uuid;
@@ -40,8 +42,10 @@ $meetupGroupRepository->add($meetupGroup);
 // dispatch domain events
 //$eventDispatcher->dispatch(new \stdClass());
 
+$meetupId = MeetupId::fromString((string)Uuid::uuid4());
+
 $meetup = Meetup::schedule(
-    MeetupId::fromString((string)Uuid::uuid4()),
+    $meetupId,
     $meetupGroup->meetupGroupId(),
     $user->userId(),
     new Title('PHP Europe October meetup'),
@@ -52,3 +56,10 @@ $meetup = Meetup::schedule(
     ))
 );
 dump($meetup);
+
+$rsvpId = RsvpId::fromString((string)Uuid::uuid4());
+$rsvp = new Rsvp($rsvpId, $meetup->meetupId(),$user->userId(), Rsvp::YES);
+
+$rsvp->toggleAnswer();
+
+dump($rsvp);
