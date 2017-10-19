@@ -10,6 +10,9 @@ use MeetupOrganizing\Domain\Model\Meetup\Meetup;
 use MeetupOrganizing\Domain\Model\Meetup\MeetupId;
 use MeetupOrganizing\Domain\Model\Meetup\ScheduledDate;
 use MeetupOrganizing\Domain\Model\Meetup\Title;
+use MeetupOrganizing\Domain\Model\Meetup\MeetupScheduledEvent;
+use MeetupOrganizing\Domain\Model\Meetup\MeetupScheduledHandler;
+
 use MeetupOrganizing\Domain\Model\MeetupGroup\MeetupGroup;
 use MeetupOrganizing\Domain\Model\Rsvp\Rsvp;
 use MeetupOrganizing\Domain\Model\Rsvp\RsvpId;
@@ -25,6 +28,10 @@ $meetupGroupRepository = new InMemoryMeetupGroupRepository();
 
 $eventDispatcher = new EventDispatcher();
 $eventDispatcher->subscribeToAllEvents(new EventCliLogger());
+
+$eventDispatcher->registerSubscriber(
+    'MeetupOrganizing\Domain\Model\Meetup\MeetupScheduledEvent',
+    new MeetupScheduledHandler());
 
 $user = new User(
     $userRepository->nextIdentity(),
@@ -55,6 +62,15 @@ $meetup = Meetup::schedule(
     ))
 );
 dump($meetup);
+
+
+$events = $meetup->recordedEvents();
+//Store all events in case it we need to replay
+foreach($events as $event) {
+    $eventDispatcher->dispatch($event);
+}
+$meetup->clearEvents();
+
 
 $rsvp = Rsvp::yes(
     RsvpId::fromString((string)Uuid::uuid4()),
